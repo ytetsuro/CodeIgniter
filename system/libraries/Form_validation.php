@@ -208,7 +208,18 @@ class CI_Form_validation {
 				throw new InvalidArgumentException('Form_validation: set_rules() expect $rules to be string or array; '.gettype($rules).' given');
 			}
 
-			$rules = preg_split('/\|(?![^\[]*\])/', $rules);
+			$non_escape_bracket = '((?<!\\\\)(?:\\\\\\\\)*[\[\]])';
+			$pipe_not_in_bracket = sprintf(
+				'/\|(?=(?:[^\[\]]*%s[^\[\]]*%s)*(?![^\[\]]*%s))/',
+				$non_escape_bracket,
+				$non_escape_bracket,
+				$non_escape_bracket
+			);
+
+			$rules = preg_split(
+				$pipe_not_in_bracket,
+				$rules
+			);
 		}
 
 		// If the field label wasn't passed we use the field name
