@@ -624,17 +624,18 @@ class Form_validation_test extends CI_TestCase {
 
 	public function test_validated_data_assignment()
 	{
-		$_POST = $post_original = array('foo' => ' bar ', 'bar' => 'baz');
+		$_POST = $post_original = array('foo' => ' bar ', 'bar' => 'baz', 'phone' => '0987654321');
 
 		$this->form_validation->set_data($_POST);
 		$this->form_validation->set_rules('foo', 'Foo', 'required|trim');
+		$this->form_validation->set_rules('phone', 'Phone', 'required|regex_match[/\A(01[2689]|09)[0-9]{8}\z/]|is_natural_no_zero');
 
 		$data_processed = NULL;
 		$validation_result = $this->form_validation->run('', $data_processed);
 
 		$this->assertTrue($validation_result);
 		$this->assertEquals($post_original, $_POST);
-		$this->assertEquals(array('foo' => 'bar', 'bar' => 'baz'), $data_processed);
+		$this->assertEquals(array('foo' => 'bar', 'bar' => 'baz', 'phone' => '0987654321'), $data_processed);
 
 		$_POST = array();
 	}
